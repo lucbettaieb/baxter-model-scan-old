@@ -11,9 +11,14 @@
 #include <ros/ros.h>
 #include <string>
 #include <fstream>
+#include <vector>
+
+#include "model_recognition/model_cluster.h"
 
 #include "model_recognition/model_pattern_set.h"
 #include "model_recognition/model_cluster_set.h"
+
+typedef ModelClusterSet std::vector<ModelCluster>;
 
 bool g_debug = true;
 
@@ -24,6 +29,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "cluster_models");
 
   ModelPatternSet pattern_set;
+  ModelClusterSet cluster_set;
 
   std::fstream feature_info("/home/luc/indigo/feature_info.dat", std::ios_base::in);
 
@@ -116,5 +122,20 @@ int main(int argc, char **argv)
     }
   }
 
-  
+  // gonna cheat a little bit.  initialize each cluster to the first
+  // model scan data of each data set.  for our purposes, this
+  // simplifies the clustering process and will allow for the easy
+  // introduction of new data.
+
+  std::vector unique_model_names;
+  std::string old_name = pattern_set.getPattern(0).getLabel();
+  for (size_t i = 1; i < pattern_set.getSize(); i++)
+  {
+    
+  }
+
+  for (size_t k = 0; k < N_CLUSTERS; k++)
+  {
+
+  }
 }
