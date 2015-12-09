@@ -10,6 +10,7 @@
 
 #include "model_recognition/model_pattern.h"
 #include <string>
+#include <cmath>
 
 ModelPattern::ModelPattern(std::string name,
                            float r, float g, float b,
@@ -35,13 +36,13 @@ float ModelPattern::EuclidianDistance(std::vector<float> cen_vec)
 {
   float distance = 0;
 
-  distance += (cen_vec[0] - c_r)*(cen_vec[0] - c_r);
-  distance += (cen_vec[1] - c_g)*(cen_vec[1] - c_g);
-  distance += (cen_vec[2] - c_b)*(cen_vec[2] - c_b);
+  distance += (red - cen_vec[0]) * (red - cen_vec[0]);
+  distance += (green - cen_vec[1]) * (green - cen_vec[1]);
+  distance += (blue - cen_vec[2]) * (blue - cen_vec[2]);
 
-  distance += (cen_vec[3] - c_l)*(cen_vec[3] - c_l);
-  distance += (cen_vec[4] - c_w)*(cen_vec[4] - c_w);
-  distance += (cen_vec[5] - c_h)*(cen_vec[5] - c_h);
+  distance += (length - cen_vec[3]) * (length - cen_vec[3]);
+  distance += (width - cen_vec[4]) * (width - cen_vec[4]);
+  distance += (height - cen_vec[5]) * (height - cen_vec[5]);
 
   return std::sqrt(distance);
 }

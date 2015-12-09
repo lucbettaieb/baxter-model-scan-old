@@ -143,6 +143,7 @@ int main(int argc, char **argv)
       cluster_set.push_back(m);
 
       pattern_set.getPattern(i).setClusterLabel(m.getLabel());
+      std::cout << "should be: " << m.getLabel() << " is: " << pattern_set.getPattern(i).getClusterLabel() << std::endl;
     }
   }
 
@@ -158,32 +159,50 @@ int main(int argc, char **argv)
 
   uint nChanges = 0;
 
+
+
   do
   {
     nChanges = 0;
     for (size_t c = 0; c < cluster_set.size(); c++)
     {
+      std::cout << "c: " << c << "cluster_set size: " << cluster_set.size() << std::endl;
       for (size_t p = 0; p < pattern_set.getSize(); p++)
       {
-        uint asgn_clust_i;
+        std::cout << "p: " << p << "pattern_set size: " << pattern_set.getSize() << std::endl;
+
+        if (pattern_set.getPattern(p).getClusterLabel().compare("none") == 0)
+        {
+          std::cout << "making moves!"<< std::endl;
+          cluster_set.at(c).addToCluster(pattern_set.getPattern(p));
+          pattern_set.getPattern(p).setClusterLabel(cluster_set.at(c).getLabel());
+          nChanges += 1;
+          std::cout << "should be: "<< cluster_set.at(c).getLabel()<<  " is: new pattern clabel "<< pattern_set.getPattern(p).getClusterLabel() << std::endl;
+        }
+
         // Find the cluster index in which the current pattern is currently assigned
+        uint asgn_clust_i;
         for (size_t i = 0; i < cluster_set.size(); i++)
         {
-          if (pattern_set.getPattern(p).getClusterLabel == cluster_set.at(i).getLabel())
+          std::cout << "pattern cluster label: " << pattern_set.getPattern(p).getClusterLabel()
+                    << ", current cluster label: " << cluster_set.at(i).getLabel() << std::endl;
+          if (pattern_set.getPattern(p).getClusterLabel() == cluster_set.at(i).getLabel())
             asgn_clust_i = i;
+        
         }
 
         if (pattern_set.getPattern(p).getLabel() != "none" && pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(c).getCentroid()) <  // new cluster distance
             pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(asgn_clust_i).getCentroid()))  // old cluster distance
         {
           // The pattern should be removed from asgn_clust_i and assigned to c
-          cluster_set.at(asgn_clust_i).removeFromCluster(pattern_set.at(p));
-          cluster_set.at(c).addToCluster(pattern_set.at(p));
-          p.setClusterLabel(cluster_set.at(c).getLabel);
+          cluster_set.at(asgn_clust_i).removeFromCluster(pattern_set.getPattern(p));
+          cluster_set.at(c).addToCluster(pattern_set.getPattern(p));
+          pattern_set.getPattern(p).setClusterLabel(cluster_set.at(c).getLabel());
           nChanges += 2;
         }
       }
     }
   } while (nChanges != 0);
 
+  ROS_INFO("DONE!");
 }

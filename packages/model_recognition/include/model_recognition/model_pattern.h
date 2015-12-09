@@ -12,6 +12,7 @@
 #define MODEL_PATTERN_H
 
 #include <string>
+#include <vector>
 
 class ModelPattern
 {
