@@ -7,6 +7,7 @@
  * BSD Licensed
  *
  */
+
 #include <ros/ros.h>
 #include <string>
 #include <fstream>
@@ -15,6 +16,8 @@
 #include "model_recognition/model_cluster_set.h"
 
 bool g_debug = true;
+
+uint N_CLUSTERS = 3;
 
 int main(int argc, char **argv)
 {
@@ -30,7 +33,7 @@ int main(int argc, char **argv)
   uint n_features = 7;
 
   std::string p_name;
-  float feat[n_features - 1];
+  float feat [n_features - 1];
 
   while (feature_info >> read_in)
   {
@@ -81,7 +84,6 @@ int main(int argc, char **argv)
                           feat[3], feat[4], feat[5]);
 
       pattern_set.pushBackPattern(pattern);
-
     }
     count_iter++;
   }
@@ -114,4 +116,5 @@ int main(int argc, char **argv)
     }
   }
 
+  
 }

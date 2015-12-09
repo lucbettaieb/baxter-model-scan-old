@@ -36,7 +36,9 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 add_executable(cluster_models src/cluster_models.cpp
                               src/model_pattern.cpp
-                              src/model_pattern_set.cpp)
+                              src/model_pattern_set.cpp
+                              src/model_cluster.cpp
+                              src/model_cluster_set.cpp)
 
 add_dependencies(cluster_models ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
