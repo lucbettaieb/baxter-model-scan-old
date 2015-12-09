@@ -18,9 +18,9 @@
 #include "model_recognition/model_pattern_set.h"
 #include "model_recognition/model_cluster_set.h"
 
-typedef ModelClusterSet std::vector<ModelCluster>;
+typedef std::vector<ModelCluster> ModelClusterSet;
 
-bool g_debug = true;
+bool g_debug = false;
 
 uint N_CLUSTERS = 3;
 
@@ -100,9 +100,10 @@ int main(int argc, char **argv)
     for (uint i = 0; i < pattern_set.getSize(); i++)
     {
       ModelPattern p = pattern_set.getPattern(i);
-      std::cout << p.getLabel() << " " << p.getRed() << " " << p.getBlue()
-                << " " <<p.getGreen() << " " << p.getLength() << " "
+      std::cout << p.getLabel() << " " << p.getRed() << " " << p.getGreen()
+                << " " <<p.getBlue() << " " << p.getLength() << " "
                 << p.getWidth() << " " <<p.getHeight() << std::endl;
+
     }
   }
   ROS_INFO("Time to pre-process data.  Scaling features.");
@@ -116,26 +117,73 @@ int main(int argc, char **argv)
     for (uint i = 0; i < pattern_set.getSize(); i++)
     {
       ModelPattern p = pattern_set.getPattern(i);
-      std::cout << p.getLabel() << " " << p.getRed() << " " << p.getBlue()
-                << " " <<p.getGreen() << " " << p.getLength() << " "
+      std::cout << p.getLabel() << " " << p.getRed() << " " << p.getGreen()
+                << " " <<p.getBlue() << " " << p.getLength() << " "
                 << p.getWidth() << " " <<p.getHeight() << std::endl;
+
     }
   }
 
+  ROS_INFO("Assigning clusters to contain first pattern of each model");
   // gonna cheat a little bit.  initialize each cluster to the first
   // model scan data of each data set.  for our purposes, this
   // simplifies the clustering process and will allow for the easy
   // introduction of new data.
 
-  std::vector unique_model_names;
-  std::string old_name = pattern_set.getPattern(0).getLabel();
-  for (size_t i = 1; i < pattern_set.getSize(); i++)
+  std::string label = "";
+
+  for (size_t i = 0; i < pattern_set.getSize(); i++)
   {
-    
+    if (pattern_set.getPattern(i).getLabel() != label)
+    {
+      label = pattern_set.getPattern(i).getLabel();
+      ModelCluster m(label);
+      m.initCluster(pattern_set.getPattern(i));
+
+      cluster_set.push_back(m);
+
+      pattern_set.getPattern(i).setClusterLabel(m.getLabel());
+    }
   }
 
-  for (size_t k = 0; k < N_CLUSTERS; k++)
+  if (g_debug)
   {
-
+    for (size_t i = 0; i < cluster_set.size(); i++)
+    {
+      cluster_set.at(i).printCentroid();
+    }
   }
+
+  ROS_INFO("Clusters initialized!  Ready for pattern processing.");
+
+  uint nChanges = 0;
+
+  do
+  {
+    nChanges = 0;
+    for (size_t c = 0; c < cluster_set.size(); c++)
+    {
+      for (size_t p = 0; p < pattern_set.getSize(); p++)
+      {
+        uint asgn_clust_i;
+        // Find the cluster index in which the current pattern is currently assigned
+        for (size_t i = 0; i < cluster_set.size(); i++)
+        {
+          if (pattern_set.at(p).getClusterLabel == cluster_set.at(i).getLabel())
+            asgn_clust_i = i;
+        }
+
+        if (pattern_set.getPattern(p).getLabel() != "none" && pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(c).getCentroid()) <  // new cluster distance
+            pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(asgn_clust_i).getCentroid()))  // old cluster distance
+        {
+          // The pattern should be removed from asgn_clust_i and assigned to c
+          cluster_set.at(asgn_clust_i).removeFromCluster(pattern_set.at(p));
+          cluster_set.at(c).addToCluster(pattern_set.at(p));
+          p.setClusterLabel(cluster_set.at(c).getLabel);
+          nChanges += 2;
+        }
+      }
+    }
+  } while (nChanges != 0);
+
 }

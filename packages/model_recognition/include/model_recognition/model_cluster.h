@@ -24,7 +24,7 @@ public:
   virtual ~ModelCluster();
 
 private:
-  std::vector<boost::shared_ptr<ModelPattern>> p_patterns;
+  std::vector<ModelPattern> patterns;
 
   std::string cluster_label;
 
@@ -37,8 +37,15 @@ private:
   float h_centroid;
 
 public:
-  void addToCluster(boost::shared_ptr<ModelPattern> p_pattern);
-  void removeFromCluster(std::string label);
+  void addToCluster(ModelPattern pattern);
+  void removeFromCluster(ModelPattern pattern);
+  void initCluster(ModelPattern pattern);
+
+  std::vector<float> getCentroid();
+
+  std::string getLabel() { return cluster_label; }
+
+  void printCentroid();
 
 };
 

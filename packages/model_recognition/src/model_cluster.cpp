@@ -9,6 +9,7 @@
  */
 
 #include <string>
+#include <vector>
 
 #include "model_recognition/model_cluster.h"
 
@@ -29,16 +30,87 @@ ModelCluster::~ModelCluster()
 {
 }
 
-void ModelCluster::addToCluster(boost::shared_ptr<ModelPattern> p_pattern)
+void ModelCluster::initCluster(ModelPattern pattern)
 {
-  p_patterns.push_back(p_pattern);
+  patterns.push_back(pattern);
+  r_centroid = pattern.getRed();
+  g_centroid = pattern.getGreen();
+  b_centroid = pattern.getBlue();
+
+  l_centroid = pattern.getLength();
+  w_centroid = pattern.getWidth();
+  h_centroid = pattern.getHeight();
 }
 
-void ModelCluster::removeFromCluster(std::string label)
+void ModelCluster::addToCluster(ModelPattern pattern)
 {
-  for (size_t i = 0; i < p_patterns.size(); i++)
+  patterns.push_back(pattern);
+
+  r_centroid *= patterns.size()/(patterns.size()+1);
+  r_centroid += (1/patterns.size()) * pattern.getRed();
+
+  g_centroid *= patterns.size()/(patterns.size()+1);
+  g_centroid += (1/patterns.size()) * pattern.getGreen();
+
+  b_centroid *= patterns.size()/(patterns.size()+1);
+  b_centroid += (1/patterns.size()) * pattern.getBlue();
+
+  l_centroid *= patterns.size()/(patterns.size()+1);
+  l_centroid += (1/patterns.size()) * pattern.getLength();
+
+  w_centroid *= patterns.size()/(patterns.size()+1);
+  w_centroid += (1/patterns.size()) * pattern.getWidth();
+
+  h_centroid *= patterns.size()/(patterns.size()+1);
+  h_centroid += (1/patterns.size()) * pattern.getHeight();
+}
+
+void ModelCluster::removeFromCluster(ModelPattern pattern)
+{
+  std::string label = pattern.getLabel();
+  for (size_t i = 0; i < patterns.size(); i++)
   {
-    if (label == p_patterns.at(i)->getLabel())
-      p_patterns.erase(p_patterns.begin()+i);
+    if (label == patterns.at(i).getLabel())
+      patterns.erase(patterns.begin()+i);
   }
+
+  r_centroid *= patterns.size()/(patterns.size()-1);
+  r_centroid -= (1/patterns.size()) * pattern.getRed();
+
+  g_centroid *= patterns.size()/(patterns.size()-1);
+  g_centroid -= (1/patterns.size()) * pattern.getGreen();
+
+  b_centroid *= patterns.size()/(patterns.size()-1);
+  b_centroid -= (1/patterns.size()) * pattern.getBlue();
+
+  l_centroid *= patterns.size()/(patterns.size()-1);
+  l_centroid -= (1/patterns.size()) * pattern.getLength();
+
+  w_centroid *= patterns.size()/(patterns.size()-1);
+  w_centroid -= (1/patterns.size()) * pattern.getWidth();
+
+  h_centroid *= patterns.size()/(patterns.size()-1);
+  h_centroid -= (1/patterns.size()) * pattern.getHeight();
+}
+
+void ModelCluster::printCentroid()
+{
+  std::cout << cluster_label << "| cR: " << r_centroid << ", cG: " << g_centroid
+            << ", cB: " << b_centroid << ", cL: " << l_centroid
+            << ", cW: " << w_centroid << ", cH: " << h_centroid << std::endl;
+}
+
+std::vector<float> ModelCluster::getCentroid()
+{
+  std::vector<float> v;
+
+  v.push_back(r_centroid);
+  v.push_back(g_centroid);
+  v.push_back(b_centroid);
+
+  v.push_back(l_centroid);
+  v.push_back(w_centroid);
+  v.push_back(h_centroid);
+
+  return v;
 }

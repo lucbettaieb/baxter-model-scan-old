@@ -25,8 +25,23 @@ ModelPattern::ModelPattern(std::string name,
   width = w;
   height = h;
 
-  cluster_id = 0;
+  cluster_label = "none";
 }
 ModelPattern::~ModelPattern()
 {
+}
+
+float ModelPattern::EuclidianDistance(std::vector<float> cen_vec)
+{
+  float distance = 0;
+
+  distance += (cen_vec[0] - c_r)*(cen_vec[0] - c_r);
+  distance += (cen_vec[1] - c_g)*(cen_vec[1] - c_g);
+  distance += (cen_vec[2] - c_b)*(cen_vec[2] - c_b);
+
+  distance += (cen_vec[3] - c_l)*(cen_vec[3] - c_l);
+  distance += (cen_vec[4] - c_w)*(cen_vec[4] - c_w);
+  distance += (cen_vec[5] - c_h)*(cen_vec[5] - c_h);
+
+  return std::sqrt(distance);
 }

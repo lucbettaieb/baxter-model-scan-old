@@ -24,7 +24,7 @@ public:
 private:
   std::string pattern_label;
 
-  uint cluster_id;
+  std::string cluster_label;
 
   float red;
   float green;
@@ -38,7 +38,7 @@ public:
   // Getters
   std::string getLabel() { return pattern_label; }
 
-  uint getClusterID() { return cluster_id; }
+  std::string getClusterLabel() { return cluster_label; }
 
   float getRed() { return red; }
   float getGreen() { return green; }
@@ -57,7 +57,9 @@ public:
   void setHeight(float h) { height = h; }
 
   // Setters
-  void setClusterID(uint id) { cluster_id = id; }
+  void setClusterLabel(std::string label) { cluster_label = label; }
+
+  float EuclidianDistance(std::vector<float> cen_vec);
 };
 
 #endif  // MODEL_PATTERN_H
