@@ -169,7 +169,7 @@ int main(int argc, char **argv)
         // Find the cluster index in which the current pattern is currently assigned
         for (size_t i = 0; i < cluster_set.size(); i++)
         {
-          if (pattern_set.at(p).getClusterLabel == cluster_set.at(i).getLabel())
+          if (pattern_set.getPattern(p).getClusterLabel == cluster_set.at(i).getLabel())
             asgn_clust_i = i;
         }
 
