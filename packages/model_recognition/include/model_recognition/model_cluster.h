@@ -41,6 +41,8 @@ public:
   void removeFromCluster(ModelPattern pattern);
   void initCluster(ModelPattern pattern);
 
+  std::vector<ModelPattern> & getPatternVec(){ return patterns; }
+
   std::vector<float> getCentroid();
 
   std::string getLabel() { return cluster_label; }

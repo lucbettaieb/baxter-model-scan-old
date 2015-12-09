@@ -23,7 +23,12 @@ void ModelPatternSet::pushBackPattern(ModelPattern mp)
   pattern_set.push_back(mp);
 }
 
-ModelPattern ModelPatternSet::getPattern(uint position)
+ModelPattern& ModelPatternSet::getPattern(uint position)
+{
+  return pattern_set.at(position);
+}
+
+ModelPattern ModelPatternSet::getPatternCopy(uint position)
 {
   return pattern_set.at(position);
 }

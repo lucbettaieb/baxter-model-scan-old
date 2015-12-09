@@ -27,7 +27,9 @@ private:
 
 public:
   void pushBackPattern(ModelPattern mp);
-  ModelPattern getPattern(uint position);
+  ModelPattern & getPattern(uint position);
+
+  ModelPattern getPatternCopy(uint position);
   void scaleFeatures();
   uint getSize(){ return pattern_set.size(); }
 
