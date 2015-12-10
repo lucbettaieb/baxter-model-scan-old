@@ -8,6 +8,7 @@
  *
  */
 
+#include <ros/ros.h>
 #include <string>
 #include <vector>
 
@@ -64,7 +65,6 @@ void ModelCluster::addToCluster(ModelPattern &pattern)
   h_centroid *= pat_size/(pat_size+1);
   h_centroid += (1/(pat_size+1)) * pattern.getHeight();
 
-  std::cout << std::endl;
   patterns.push_back(pattern);
 }
 
@@ -100,9 +100,22 @@ void ModelCluster::removeFromCluster(ModelPattern pattern)
 
 void ModelCluster::printCentroid()
 {
-  std::cout << cluster_label << "| cR: " << r_centroid << ", cG: " << g_centroid
+  std::cout << cluster_label << " | cR: " << r_centroid << ", cG: " << g_centroid
             << ", cB: " << b_centroid << ", cL: " << l_centroid
             << ", cW: " << w_centroid << ", cH: " << h_centroid << std::endl;
+}
+
+void ModelCluster::printMislabelReport()
+{
+  uint numMislabeled = 0;
+
+  for (size_t i = 0; i < patterns.size(); i++)
+  {
+    if (patterns.at(i).getLabel().compare(cluster_label) != 0)
+      numMislabeled++;
+  }
+
+  ROS_INFO("%i patterns have been miscategorized.", numMislabeled);
 }
 
 std::vector<float> ModelCluster::getCentroid()
@@ -119,3 +132,4 @@ std::vector<float> ModelCluster::getCentroid()
 
   return v;
 }
+
