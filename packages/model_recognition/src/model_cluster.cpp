@@ -42,64 +42,75 @@ void ModelCluster::initCluster(ModelPattern pattern)
   h_centroid = pattern.getHeight();
 }
 
-void ModelCluster::addToCluster(ModelPattern pattern)
+void ModelCluster::addToCluster(ModelPattern &pattern)
 {
+  float pat_size = static_cast<float>(patterns.size());
+
+  r_centroid = r_centroid * (pat_size/(pat_size+1)) + ((1/(pat_size+1)) * pattern.getRed());
+  std::cout << "new r: " << r_centroid << std::endl;
+
+  std::cout << "old g: " << g_centroid << std::endl;
+  g_centroid *= pat_size/(pat_size+1);
+  g_centroid += (1/(pat_size+1)) * pattern.getGreen();
+  std::cout << "new g: " << g_centroid << std::endl;
+
+  std::cout << "old b: " << b_centroid << std::endl;
+  b_centroid *= pat_size/(pat_size+1);
+  b_centroid += (1/(pat_size+1)) * pattern.getBlue();
+  std::cout << "new b: " << b_centroid << std::endl;
+
+  std::cout << "old l: " << l_centroid << std::endl;
+  l_centroid *= pat_size/(pat_size+1);
+  l_centroid += (1/(pat_size+1)) * pattern.getLength();
+  std::cout << "new l: " << l_centroid << std::endl;
+
+  std::cout << "old w: " << w_centroid << std::endl;
+  w_centroid *= pat_size/(pat_size+1);
+  w_centroid += (1/(pat_size+1)) * pattern.getWidth();
+  std::cout << "new w: " << w_centroid << std::endl;
+
+  std::cout << "old h: " << h_centroid << std::endl;
+  h_centroid *= pat_size/(pat_size+1);
+  h_centroid += (1/(pat_size+1)) * pattern.getHeight();
+  std::cout << "new h: " << h_centroid << std::endl;
+
+  std::cout << std::endl;
   patterns.push_back(pattern);
-
-  r_centroid *= patterns.size()/(patterns.size()+1);
-  r_centroid += (1/(patterns.size()+1)) * pattern.getRed();
-
-  g_centroid *= patterns.size()/(patterns.size()+1);
-  g_centroid += (1/(patterns.size()+1)) * pattern.getGreen();
-
-  b_centroid *= patterns.size()/(patterns.size()+1);
-  b_centroid += (1/(patterns.size()+1)) * pattern.getBlue();
-
-  l_centroid *= patterns.size()/(patterns.size()+1);
-  l_centroid += (1/(patterns.size()+1)) * pattern.getLength();
-
-  w_centroid *= patterns.size()/(patterns.size()+1);
-  w_centroid += (1/(patterns.size()+1)) * pattern.getWidth();
-
-  h_centroid *= patterns.size()/(patterns.size()+1);
-  h_centroid += (1/(patterns.size()+1)) * pattern.getHeight();
 }
 
 void ModelCluster::removeFromCluster(ModelPattern pattern)
 {
-  std::cout << "pat size before erase: " << patterns.size() << std::endl;
+  float pat_size = static_cast<float>(patterns.size());
+
   std::string label = pattern.getLabel();
   for (size_t i = 0; i < patterns.size(); i++)
   {
     if (label == patterns.at(i).getLabel())
       patterns.erase(patterns.begin()+i);
   }
-
-  std::cout << "pat size after erase: " << patterns.size() << std::endl;
-  std::cout << "r_centroid: " << r_centroid << std::endl;
-  std::cout << "pattern getRed: " << pattern.getRed() << std::endl;
-  r_centroid *= patterns.size()/(patterns.size()-1);
-  r_centroid -= (1/(patterns.size()-1)) * pattern.getRed();
+  
+  r_centroid *= pat_size/(pat_size-1);
+  r_centroid -= (1/(pat_size-1)) * pattern.getRed();
 
   std::cout << "2" << std::endl;
-  g_centroid *= patterns.size()/(patterns.size()-1);
-  g_centroid -= (1/(patterns.size()-1)) * pattern.getGreen();
+  g_centroid *= pat_size/(pat_size-1);
+  g_centroid -= (1/(pat_size-1)) * pattern.getGreen();
 
   std::cout << "3" << std::endl;
-  b_centroid *= patterns.size()/(patterns.size()-1);
-  b_centroid -= (1/(patterns.size()-1)) * pattern.getBlue();
+  b_centroid *= pat_size/(pat_size-1);
+  b_centroid -= (1/(pat_size-1)) * pattern.getBlue();
 
   std::cout << "4" << std::endl;
-  l_centroid *= patterns.size()/(patterns.size()-1);
-  l_centroid -= (1/(patterns.size()-1)) * pattern.getLength();
+  l_centroid *= pat_size/(pat_size-1);
+  l_centroid -= (1/(pat_size-1)) * pattern.getLength();
 
   std::cout << "5" << std::endl;
-  w_centroid *= patterns.size()/(patterns.size()-1);
-  w_centroid -= (1/(patterns.size()-1)) * pattern.getWidth();
+  w_centroid *= pat_size/(pat_size-1);
+  w_centroid -= (1/(pat_size-1)) * pattern.getWidth();
 
   std::cout << "6" << std::endl;
-  h_centroid *= patterns.size()/(patterns.size()-1);
-  h_centroid -= (1/(patterns.size()-1)) * pattern.getHeight();
+  h_centroid *= pat_size/(pat_size-1);
+  h_centroid -= (1/(pat_size-1)) * pattern.getHeight();
 }
 
 void ModelCluster::printCentroid()

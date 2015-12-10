@@ -16,7 +16,6 @@
 #include "model_recognition/model_cluster.h"
 
 #include "model_recognition/model_pattern_set.h"
-#include "model_recognition/model_cluster_set.h"
 
 typedef std::vector<ModelCluster> ModelClusterSet;
 
@@ -103,7 +102,6 @@ int main(int argc, char **argv)
       std::cout << p.getLabel() << " " << p.getRed() << " " << p.getGreen()
                 << " " <<p.getBlue() << " " << p.getLength() << " "
                 << p.getWidth() << " " <<p.getHeight() << std::endl;
-
     }
   }
   ROS_INFO("Time to pre-process data.  Scaling features.");
@@ -120,7 +118,6 @@ int main(int argc, char **argv)
       std::cout << p.getLabel() << " " << p.getRed() << " " << p.getGreen()
                 << " " <<p.getBlue() << " " << p.getLength() << " "
                 << p.getWidth() << " " <<p.getHeight() << std::endl;
-
     }
   }
 
@@ -143,7 +140,6 @@ int main(int argc, char **argv)
       cluster_set.push_back(m);
 
       pattern_set.getPattern(i).setClusterLabel(m.getLabel());
-      //std::cout << "!!! should be: " << m.getLabel() << " is: " << pattern_set.getPattern(i).getClusterLabel() << std::endl;
     }
   }
 
@@ -155,81 +151,81 @@ int main(int argc, char **argv)
     }
   }
 
+// Code before here definitely works to my knowledge
+
   ROS_INFO("Clusters initialized!  Ready for pattern processing.");
 
   uint nChanges = 0;
-
+for (size_t i = 0; i < cluster_set.size(); i++)
+  {
+    cluster_set.at(i).printCentroid();
+    std::cout << std::endl;
+  }
+  // this be fuckin shit up
   for (size_t p = 0; p < pattern_set.getSize(); p++)
   {
     if (pattern_set.getPattern(p).getClusterLabel().compare("none") == 0)
+    {
       uint rand_clust = rand() % 3;
 
-      cluster_set.at(rand_clust).addToCluster(pattern_set.getPattern(p));
       pattern_set.getPattern(p).setClusterLabel(cluster_set.at(rand_clust).getLabel());
-      //nChanges += 1;
+      cluster_set.at(rand_clust).addToCluster(pattern_set.getPattern(p));
     }
   }
 
+  for (size_t i = 0; i < cluster_set.size(); i++)
+  {
+    cluster_set.at(i).printCentroid();
+    std::cout << std::endl;
+  }
+
+  uint iters= 0;
   do
   {
     nChanges = 0;
     for (size_t c = 0; c < cluster_set.size(); c++)
     {
-      std::cout << "c: " << c << "cluster_set size: " << cluster_set.size() << std::endl;
       for (size_t p = 0; p < pattern_set.getSize(); p++)
       {
-        std::cout << "p: " << p << ", pattern_set size: " << pattern_set.getSize() << std::endl;
-
-        // if (pattern_set.getPattern(p).getClusterLabel().compare("none") == 0)
-        // {
-        //   std::cout << "making none some: " << std::endl;
-        //   uint rand_clust = rand() % 3;
-        //   std::cout << 
-        //   cluster_set.at(rand_clust).addToCluster(pattern_set.getPattern(p));
-        //   pattern_set.getPattern(p).setClusterLabel(cluster_set.at(rand_clust).getLabel());
-        //   nChanges += 1;
-        // }
-
+  
         // Find the cluster index in which the current pattern is currently assigned
-        uint asgn_clust_i;
+        uint asgn_clust_i = -1;
         for (size_t i = 0; i < cluster_set.size(); i++)
         {
-          if (pattern_set.getPattern(p).getClusterLabel() == cluster_set.at(i).getLabel())
+          // std::cout << i << std::endl;
+          if (pattern_set.getPattern(p).getClusterLabel().compare(cluster_set.at(i).getLabel()) == 0)
+          {
             asgn_clust_i = i;
+          }
         }
+
+        // ROS_INFO("got current pattern's cluster label index");
 
         // std::cout << "about to check if we need to reassign clusters." << std::endl;
         // std::cout << "(new) dist from p to c: " << pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(c).getCentroid()) 
         //           << ", (old) dist from p to asgn_clust_i: " << pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(asgn_clust_i).getCentroid())
         //           << std::endl;
-        
-        if (pattern_set.getPattern(p).getLabel() != "none" &&
-            pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(c).getCentroid()) <  // new cluster distance
+
+        if (pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(c).getCentroid()) <  // new cluster distance
             pattern_set.getPattern(p).EuclidianDistance(cluster_set.at(asgn_clust_i).getCentroid()))  // old cluster distance
         {
-          std::cout << "remove from cluster " << std::endl;
-          std::cout << "old cluster label: " << cluster_set.at(asgn_clust_i).getLabel() << std::endl;
-          std::cout << "pattern label: " << pattern_set.getPattern(p).getLabel() << std::endl;
           // The pattern should be removed from asgn_clust_i and assigned to c
           cluster_set.at(asgn_clust_i).removeFromCluster(pattern_set.getPattern(p));
-          
-          std::cout << "set cluster label" << std::endl;
           pattern_set.getPattern(p).setClusterLabel(cluster_set.at(c).getLabel());
-          std::cout << "add 2 cluster" << std::endl;
           cluster_set.at(c).addToCluster(pattern_set.getPattern(p));
-          
-          
+
           nChanges += 2;
         }
       }
     }
+    iters++;
   } while (nChanges != 0);
 
   ROS_INFO("DONE!");
   ROS_INFO("report: ");
   for (size_t i = 0; i < cluster_set.size(); i++)
   {
-    std::cout << cluster_set.at(i).getLabel() << std::endl;
+    cluster_set.at(i).printCentroid();
     for (size_t j = 0; j < cluster_set.at(i).getPatternVec().size(); j++)
     {
       std::cout << "pat label: " << cluster_set.at(i).getPatternVec().at(j).getLabel() << std::endl;

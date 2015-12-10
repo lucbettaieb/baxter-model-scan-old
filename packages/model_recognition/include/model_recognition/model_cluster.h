@@ -37,7 +37,7 @@ private:
   float h_centroid;
 
 public:
-  void addToCluster(ModelPattern pattern);
+  void addToCluster(ModelPattern &pattern);
   void removeFromCluster(ModelPattern pattern);
   void initCluster(ModelPattern pattern);
 
